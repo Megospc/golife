@@ -4,23 +4,21 @@ close_canvas();
 document.getElementById('view_buttons').style.display='none' ;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-function size8() {
-	size = 8;
+function set_size(s) {
+	size = s;
 	sizeUpload() ;
 }
-function size24() {
-	size = 24;
-	sizeUpload() ;
-} 
 function selectSize(){
+	stop_run();
 	close_canvas();
 	size = 0;
+	editor_turn = 0;
 	document.getElementById('size').style.display='block' ; 
 	document.getElementById('view_buttons').style.display='none' ;
 	reformer();
 }
 function sizeUpload(){
-  view_mode_turn = 0;
+	setTimeout(() => { editor_turn = 1; }, 1000);
 	create_array();
 	close_sizes();
 	document.getElementById('view').style.display='block' ;
@@ -42,6 +40,9 @@ function sizeUpload(){
 	}
 }
 function close_canvas(){
+	document.getElementById('stop').style.display='none' ; 
+	document.getElementById('render_type_shower').style.display='none' ; 
+	document.getElementById('render_type_buttons').style.display='none' ; 
 	document.getElementById('canvas').style.display='none' ;
 	document.getElementById('life').style.display='none' ;
 	document.getElementById('run').style.display='none' ;
@@ -58,7 +59,9 @@ function close_sizes(){
 }
 function view_mode(){
 	first_frame();
-	view_mode_turn = 1;
+	editor_turn = 0;
+	document.getElementById('render_type_shower').style.display='block' ; 
+	document.getElementById('render_type_buttons').style.display='block' ; 
 	document.getElementById('view_buttons').style.display='block' ;
 	document.getElementById('life_buttons').style.display='none' ;
 	document.getElementById('instrument').style.display='none' ;
@@ -69,8 +72,12 @@ function view_mode(){
 	document.getElementById('run').style.display='block' ;
 }
 function back_to_editor(){
-	view_mode_turn = 0;
+	rainbow();
+	stop_run();
+	editor_turn = 1;
 	first_frame();
+	document.getElementById('render_type_shower').style.display='none' ; 
+	document.getElementById('render_type_buttons').style.display='none' ; 
 	document.getElementById('view_buttons').style.display='none' ;
 	document.getElementById('run').style.display='none' ;
 	document.getElementById('life_buttons').style.display='block' ;

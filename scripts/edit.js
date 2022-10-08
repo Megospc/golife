@@ -1,7 +1,7 @@
 var pixels = new Array();
 var color = 7;
 var color_name = "white";
-var instrument = "pencil";
+var instrument = "reformer";
 var count = new Array();
 var x;
 var y;

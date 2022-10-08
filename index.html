@@ -7,8 +7,11 @@
 <body style="background-color: #000000;">
 	<div id="size">
 		<p style="color: #ffffff;">Пожалуйста выбирите размер поля:</p> 
-		<div><button onclick="size8();" id="size">микро 8×8 (1.28кб, 64 п)</button></div>
-		<div><button onclick="size24();" id="size">мини 24×24 (11.52кб, 0.5 кп)</button></div>
+		<div><button onclick="set_size(8);">микро 8×8 (1.28кб, 64 п)</button></div>
+		<div><button onclick="set_size(24);">мини 24×24 (11.52кб, 0.5 кп)</button></div>
+		<div><button onclick="set_size(48);">стартовый 48×48 (46.08кб, 2.3 кп)</button></div>
+		<div><button onclick="set_size(96);">базовый 96×96 (184.32кб, 9.2 кп)</button></div>
+		<div><button onclick="set_size(192);">эксперт 192×192 (737.28кб, 37 кп)</button></div>
 	</div>
 	<div id="life">
 		<button onclick="selectSize();">в меню</button>
@@ -23,7 +26,7 @@
 		<button style="background-color: #ff0000;" onclick="color = 1; set_color();">R</button>
 		<button style="background-color: #ffff00;" onclick="color = 2; set_color();">Y</button>
 		<button style="background-color: #00ff00;" onclick="color = 3; set_color();">G</button>
-		<button style="background-color: #00ffff;" onclick="color = 4; set_color();">B</button>
+		<button style="background-color: #00ffff;" onclick="color = 4; set_color();">A</button>
 		<button style="background-color: #0000ff;" onclick="color = 5; set_color();">B</button>
 		<button style="background-color: #ff00ff;" onclick="color = 6; set_color();">V</button>
 		<button style="background-color: #ffffff;" onclick="color = 7; set_color(); ">W</button>
@@ -31,7 +34,7 @@
 	</div> 
 	<div>
 		<button style="background-color: #ffffff;" id="color_now">N</button> 
-		<img id="instrument" src="assects/buttons/pencil.png" alt="инструмент" style="background-color: #ffffff; border-width: 2px; border-style: solid; border-color: white;" height="20" width="20">
+		<img id="instrument" src="assects/buttons/reformer.png" alt="инструмент" style="background-color: #ffffff; border-width: 2px; border-style: solid; border-color: white;" height="20" width="20">
 	</div>
 	<div><button id="clear" onclick="clear_life();">очистить</button></div>
 	<div><button id="save" onclick="save_life();">сохранить</button></div>
@@ -42,8 +45,17 @@
 		<button onclick="one_step();">один шаг</button>
 	</div>
 	<button onclick="run_life();" id="run">старт</button> 
+	<button onclick="stop_run();" id="stop">стоп</button> 
+	<input value="50" type="number" id="run_delay" style="display: none;">
+	<p></p>
+	<div id="render_type_buttons">
+		<button onclick="rainbow();" >радужный</button>
+		<button onclick="age();" >возраст</button>
+		<button onclick="mono();" >монотон</button>
+	</div>
+	<button id="render_type_shower">радужный</button>
 </body>
-<a download="life.golofe" href="" id="download"></a>
+<a download="life.golofe" href="null" id="download"></a>
 <script src="scripts/view_mode.js"></script>
 <script src="scripts/save_open.js"></script>
 <script src="scripts/edit.js"></script>

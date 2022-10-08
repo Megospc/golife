@@ -7,9 +7,14 @@ var colors_red = new Array();
 var colors_green = new Array();
 var colors_blue = new Array();
 var alive = new Array();
+var age_colors = new Array();
+var mono_color = "#ffffff";
+var render_type = "rainbow";
 var alive_now;
 var run = 0;
+age_colors = ["black", "red", "orange", "yellow", "lime", "aqua", "blue", "violet", "white"]
 function first_frame(){
+	stop_run();
 	frame_byte = [];
 	for (let i = 0; i < size; i++) {
 		color_new[i] = new Array();
@@ -91,8 +96,24 @@ function first_frame(){
 				frame_green[x][y] = 128;
 				frame_blue[x][y] = 128;
 			} 
-			ctx.fillStyle = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
-			ctx.fillRect(x*20+1,y*20+1,19,19);
+			if (pixels[x][y] != 0 ) {
+				if(render_type == "rainbow"){
+					ctx.fillStyle = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
+					ctx.fillRect(x*20+1,y*20+1,19,19);
+				} 
+				if(render_type == "age"){
+					ctx.fillStyle = age_colors[1];
+					ctx.fillRect(x*20+1,y*20+1,19,19);
+				} 
+				if(render_type == "mono"){
+					ctx.fillStyle = mono_color;
+					ctx.fillRect(x*20+1,y*20+1,19,19);
+				} 
+			} 
+			else {
+				ctx.fillStyle = "black";
+				ctx.fillRect(x*20+1,y*20+1,19,19);
+			}
 		}
 	}
 }
@@ -102,19 +123,34 @@ function one_step(){
 		for (y = 0; y < size; y++) {
 			if (frame_byte[x][y] == 0) {
 				if (alive[x][y] == 3) {
-					frame_byte[x][y] = 1;				
-					ctx.fillStyle = color_new[x][y];
+					frame_byte[x][y] = 1;	
+					if (render_type == "rainbow") {	
+						ctx.fillStyle = color_new[x][y];
+					} 
+					if (render_type == "age") {	
+						ctx.fillStyle = age_colors[1];
+					} 
+					if (render_type == "mono") {	
+						ctx.fillStyle = "white";
+					} 
 					ctx.fillRect(x*20+1,y*20+1,19,19);
 				}
 			}
 			else {
 				if (alive[x][y] == 2 || alive[x][y] == 3) {
-					if (frame_byte[x][y] != 8) {
+					if (frame_byte[x][y] != age_colors.length-1) {
 						frame_byte[x][y] = frame_byte[x][y]+1;
+						if (render_type == "age") {	
+							ctx.fillStyle = age_colors[frame_byte[x][y]];
+							ctx.fillRect(x*20+1,y*20+1,19,19);
+						} 
 					}
 				} 
 				else {
 					frame_byte[x][y] = 0;
+					frame_red[x][y] = 0;
+					frame_green[x][y] = 0;
+					frame_blue[x][y] = 0;
 					ctx.fillStyle = "black"
 					ctx.fillRect(x*20+1,y*20+1,19,19);
 				}
@@ -154,7 +190,7 @@ function calculate(){
 					is_alive(x, y+1);
 			}
 			alive[x][y] = alive_now;
-			if (alive_now == 3) {
+			if (alive_now == 3 && render_type == "rainbow") {
 				frame_red[x][y] = Math.floor((colors_red[0] + colors_red[1] + colors_red[2])/3);
 				frame_green[x][y] = Math.floor((colors_green[0] + colors_green[1] + colors_green[2])/3);
 				frame_blue[x][y] = Math.floor((colors_blue[0] + colors_blue[1] + colors_blue[2])/3); 
@@ -166,9 +202,11 @@ function calculate(){
 function is_alive(x_pixel, y_pixel){
 	if(frame_byte[x_pixel][y_pixel]){
 	alive_now++;
-	colors_red[colors_red.length] = frame_red[x_pixel][y_pixel];
-	colors_green[colors_green.length] = frame_green[x_pixel][y_pixel];
-	colors_blue[colors_blue.length] = frame_blue[x_pixel][y_pixel];
+	if(render_type == "rainbow"){
+		colors_red[colors_red.length] = frame_red[x_pixel][y_pixel];
+		colors_green[colors_green.length] = frame_green[x_pixel][y_pixel];
+		colors_blue[colors_blue.length] = frame_blue[x_pixel][y_pixel];
+	} 
 	}
 }
 function componentToHex(c) {
@@ -181,13 +219,51 @@ function rgbToHex(r, g, b) {
 }
 function run_life(){
 	run = 1;
-	document.getElementById('run').innerHTML="стоп" ;
-	document.getElementById('run').onclick="stop_run();" ;
-	setTimeout(() => {  one_step();  }, 500);
-	setTimeout(() => {  if (run == 1) {setTimeout(() => {  one_step();  }, 500);}  }, 505);
+	document.getElementById('stop').style.display='block';
+	document.getElementById('run').style.display='none';
+	run_step();
 }
 function stop_run(){
-	document.getElementById('run').innerHTML = "старт";
-	document.getElementById('run').onclick="run_life();"; 
+	document.getElementById('stop').style.display='none';
+	document.getElementById('run').style.display='block';
 	run = 0;
+}
+function run_step(){
+	setTimeout(() => { if (run == 1) {one_step(); run_step();}  }, document.getElementById('run_delay').value);
+}
+function rainbow(){
+	stop_run();
+	render_type = "rainbow";
+	document.getElementById('render_type_shower').innerHTML='радужный';
+	for (x = 0; x < size; x++) {
+		for (y = 0; y < size; y++) {
+			ctx.fillStyle = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
+			ctx.fillRect(x*20+1,y*20+1,19,19);
+		}
+	} 
+}
+function age(){
+	stop_run();
+	render_type = "age";
+	document.getElementById('render_type_shower').innerHTML='возраст';
+	for (x = 0; x < size; x++) {
+		for (y = 0; y < size; y++) {
+			ctx.fillStyle = age_colors[frame_byte[x][y]];
+			ctx.fillRect(x*20+1,y*20+1,19,19);
+		}
+	} 
+	console.log(frame_byte); 
+}
+function mono(){
+	stop_run();
+	render_type = "mono";
+	document.getElementById('render_type_shower').innerHTML='монотон';
+	for (x = 0; x < size; x++) {
+		for (y = 0; y < size; y++) {
+			if (frame_byte[x][y] != 0 ) {
+				ctx.fillStyle = mono_color;
+				ctx.fillRect(x*20+1,y*20+1,19,19);
+			} 
+		}
+	} 
 }
