@@ -1,3 +1,5 @@
+var colors_sheet = new Array();
+colors_sheet = [0,0,0, 255,0,0, 255,128,0, 255,255,0, 128,128,0, 0,255,0, 0,255,128, 0,255,255, 0,0,255, 128,0,255, 255,0,255, 255,0,128, 255,255,255, 128,128,128, 207,207,207, 128,144,160];
 var frame_byte = new Array();
 var frame_red = new Array();
 var frame_green = new Array();
@@ -11,10 +13,16 @@ var age_colors = new Array();
 var mono_color = "#ffffff";
 var render_type = "rainbow";
 var alive_now;
+var generation;
+var cells;
 var run = 0;
-age_colors = ["black", "red", "orange", "yellow", "lime", "aqua", "blue", "violet", "white"]
+var mili_time;
+var calc_time;
+age_colors = ["black", "red", "orange", "yellow", "lime", "aqua", "blue", "magenta", "white"]
 function first_frame(){
 	stop_run();
+	cells = 0;
+	generation = 1;
 	frame_byte = [];
 	for (let i = 0; i < size; i++) {
 		color_new[i] = new Array();
@@ -34,6 +42,7 @@ function first_frame(){
 			} 
 			else {
 				frame_byte[x][y] = 1;
+				cells++;
 			}
 		}
 	}
@@ -51,71 +60,30 @@ function first_frame(){
 	}
 	for (x = 0; x < size; x++) {
 		for (y = 0; y < size; y++) {
-			if (pixels[x][y] == 0) {
-				frame_red[x][y] = 0;
-				frame_green[x][y] = 0;
-				frame_blue[x][y] = 0;
-			}
-			if (pixels[x][y] == 1) {
-				frame_red[x][y] = 255;
-				frame_green[x][y] = 0;
-				frame_blue[x][y] = 0;
-			}
-			if (pixels[x][y] == 2) {
-				frame_red[x][y] = 255;
-				frame_green[x][y] = 255;
-				frame_blue[x][y] = 0;
-			}
-			if (pixels[x][y] == 3) {
-				frame_red[x][y] = 0;
-				frame_green[x][y] = 255;
-				frame_blue[x][y] = 0;
-			}
-			if (pixels[x][y] == 4) {
-				frame_red[x][y] = 0;
-				frame_green[x][y] = 255;
-				frame_blue[x][y] = 255;
-			} 
-			if (pixels[x][y] == 5) {
-				frame_red[x][y] = 0;
-				frame_green[x][y] = 0;
-				frame_blue[x][y] = 255;
-			}
-			if (pixels[x][y] == 6) {
-				frame_red[x][y] = 255;
-				frame_green[x][y] = 0;
-				frame_blue[x][y] = 255;
-			}
-			if (pixels[x][y] == 7) {
-				frame_red[x][y] = 255;
-				frame_green[x][y] = 255;
-				frame_blue[x][y] = 255;
- 			} 
- 			if (pixels[x][y] == 8) {
-				frame_red[x][y] = 128;
-				frame_green[x][y] = 128;
-				frame_blue[x][y] = 128;
-			} 
+			frame_red[x][y] = colors_sheet[pixels[x][y]*3];
+			frame_green[x][y] = colors_sheet[pixels[x][y]*3+1] ;
+			frame_blue[x][y] = colors_sheet[pixels[x][y]*3+2];
 			if (pixels[x][y] != 0 ) {
 				if(render_type == "rainbow"){
 					ctx.fillStyle = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
-					ctx.fillRect(x*20+1,y*20+1,19,19);
+					fill_rect(x*20+1,y*20+1,19,19);
 				} 
 				if(render_type == "age"){
 					ctx.fillStyle = age_colors[1];
-					ctx.fillRect(x*20+1,y*20+1,19,19);
+					fill_rect(x*20+1,y*20+1,19,19);
 				} 
 				if(render_type == "mono"){
 					ctx.fillStyle = mono_color;
-					ctx.fillRect(x*20+1,y*20+1,19,19);
+					fill_rect(x*20+1,y*20+1,19,19);
 				} 
 			} 
 			else {
 				ctx.fillStyle = "black";
-				ctx.fillRect(x*20+1,y*20+1,19,19);
+				fill_rect(x,y);
 			}
 		}
 	}
+	statistic();
 }
 function one_step(){
 	calculate();
@@ -124,8 +92,11 @@ function one_step(){
 			if (frame_byte[x][y] == 0) {
 				if (alive[x][y] == 3) {
 					frame_byte[x][y] = 1;	
+					frame_red[x][y] = color_new[x][y][0];
+					frame_green[x][y] = color_new[x][y][1];
+					frame_blue[x][y] = color_new[x][y][2];
 					if (render_type == "rainbow") {	
-						ctx.fillStyle = color_new[x][y];
+						ctx.fillStyle = rgbToHex(color_new[x][y][0],color_new[x][y][1],color_new[x][y][2]);
 					} 
 					if (render_type == "age") {	
 						ctx.fillStyle = age_colors[1];
@@ -133,7 +104,8 @@ function one_step(){
 					if (render_type == "mono") {	
 						ctx.fillStyle = "white";
 					} 
-					ctx.fillRect(x*20+1,y*20+1,19,19);
+					fill_rect(x,y);
+					cells++;
 				}
 			}
 			else {
@@ -142,7 +114,7 @@ function one_step(){
 						frame_byte[x][y] = frame_byte[x][y]+1;
 						if (render_type == "age") {	
 							ctx.fillStyle = age_colors[frame_byte[x][y]];
-							ctx.fillRect(x*20+1,y*20+1,19,19);
+							fill_rect(x,y);
 						} 
 					}
 				} 
@@ -152,11 +124,14 @@ function one_step(){
 					frame_green[x][y] = 0;
 					frame_blue[x][y] = 0;
 					ctx.fillStyle = "black"
-					ctx.fillRect(x*20+1,y*20+1,19,19);
+					fill_rect(x,y);
+					cells--;
 				}
 			}
 		} 
-	} 
+	}
+	generation++;
+	statistic();
 }
 function calculate(){
 	for (x = 0; x < size; x++) {
@@ -190,23 +165,18 @@ function calculate(){
 					is_alive(x, y+1);
 			}
 			alive[x][y] = alive_now;
-			if (alive_now == 3 && render_type == "rainbow") {
-				frame_red[x][y] = Math.floor((colors_red[0] + colors_red[1] + colors_red[2])/3);
-				frame_green[x][y] = Math.floor((colors_green[0] + colors_green[1] + colors_green[2])/3);
-				frame_blue[x][y] = Math.floor((colors_blue[0] + colors_blue[1] + colors_blue[2])/3); 
-				color_new[x][y] = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
+			if (alive_now == 3) {
+				color_new[x][y] = new Uint8Array([Math.floor((colors_red[0] + colors_red[1] + colors_red[2])/3), Math.floor((colors_green[0] + colors_green[1] + colors_green[2])/3), Math.floor((colors_blue[0] + colors_blue[1] + colors_blue[2])/3)]);
 			}
 		} 
 	} 
 }
 function is_alive(x_pixel, y_pixel){
 	if(frame_byte[x_pixel][y_pixel]){
-	alive_now++;
-	if(render_type == "rainbow"){
+		alive_now++;
 		colors_red[colors_red.length] = frame_red[x_pixel][y_pixel];
 		colors_green[colors_green.length] = frame_green[x_pixel][y_pixel];
-		colors_blue[colors_blue.length] = frame_blue[x_pixel][y_pixel];
-	} 
+		colors_blue[colors_blue.length] = frame_blue[x_pixel][y_pixel]; 
 	}
 }
 function componentToHex(c) {
@@ -229,7 +199,12 @@ function stop_run(){
 	run = 0;
 }
 function run_step(){
-	setTimeout(() => { if (run == 1) {one_step(); run_step();}  }, document.getElementById('run_delay').value);
+	calc_time = performance.now();
+	one_step(); 
+	calc_time = performance.now() - calc_time;
+	document.getElementById('fps').innerHTML=`Max FPS: ${Math.floor(1000/calc_time)}`;
+	setTimeout(() => { if (run == 1) {run_step();} }, 1000/document.getElementById('run_delay').value);
+	
 }
 function rainbow(){
 	stop_run();
@@ -238,7 +213,7 @@ function rainbow(){
 	for (x = 0; x < size; x++) {
 		for (y = 0; y < size; y++) {
 			ctx.fillStyle = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
-			ctx.fillRect(x*20+1,y*20+1,19,19);
+			fill_rect(x,y);
 		}
 	} 
 }
@@ -249,10 +224,10 @@ function age(){
 	for (x = 0; x < size; x++) {
 		for (y = 0; y < size; y++) {
 			ctx.fillStyle = age_colors[frame_byte[x][y]];
-			ctx.fillRect(x*20+1,y*20+1,19,19);
+			fill_rect(x,y);
 		}
 	} 
-	console.log(frame_byte); 
+		
 }
 function mono(){
 	stop_run();
@@ -262,8 +237,11 @@ function mono(){
 		for (y = 0; y < size; y++) {
 			if (frame_byte[x][y] != 0 ) {
 				ctx.fillStyle = mono_color;
-				ctx.fillRect(x*20+1,y*20+1,19,19);
+				fill_rect(x,y);
 			} 
 		}
 	} 
+}
+function statistic(){
+  document.getElementById('statistic').innerHTML=`ПОКОЛЕНИЕ: ${generation} ЯЧЕЙКИ: ${cells}`;
 }

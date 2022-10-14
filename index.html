@@ -5,60 +5,85 @@
 	<link rel="icon" href="iconGliderFirst.png" type="image/x-icon" id="icon">
 </head>
 <body style="background-color: #000000;">
+	<canvas id="preview"></canvas>
 	<div id="size">
 		<p style="color: #ffffff;">Пожалуйста выбирите размер поля:</p> 
+		<div><button onclick="set_size(3);">микро 3×3 (180б, 9 п)</button></div>
 		<div><button onclick="set_size(8);">микро 8×8 (1.28кб, 64 п)</button></div>
 		<div><button onclick="set_size(24);">мини 24×24 (11.52кб, 0.5 кп)</button></div>
 		<div><button onclick="set_size(48);">стартовый 48×48 (46.08кб, 2.3 кп)</button></div>
 		<div><button onclick="set_size(96);">базовый 96×96 (184.32кб, 9.2 кп)</button></div>
 		<div><button onclick="set_size(192);">эксперт 192×192 (737.28кб, 37 кп)</button></div>
 	</div>
-	<div id="life">
-		<button onclick="selectSize();">в меню</button>
-		<p style="color: #ffffff;">&#171Жизнь&#187</p>
-	</div>
-	<canvas height="160" width="160" id="canvas" style="background-color: #000000; border-width: 2px; border-style: solid;					     border-color: grey; ">ВАШ БРАУЗЕР НЕ ПОДДЕРЖИВАЕТ HTML 5!!</canvas>
-	<div id="life_buttons">
+	<div id="life_buttons" style="position: fixed; z-index: 2;">
+	  <div>
+	   <button style="" onclick="select_size();">в меню</button>
+			<button onclick="pencil();"><img src="assets/buttons/pencil.png" alt="карандаш" height="10" width="10"></button>
+			<button onclick="eraser();" ><img src="assets/buttons/eraser.png" alt="стёрка" height="10" width="10"></button>
+			<button onclick="reformer();"><img src="assets/buttons/reformer.png" alt="преобразование" height="10" width="10"></button>
+			<p></p>
+			<img id="instrument" src="assets/buttons/reformer.png" alt="инструмент" style="background-color: #ffffff; border-width: 2px; border-style: solid; border-color: white;" height="20" width="20">
+		</div>
 		<p></p>
-		<button onclick="pencil();"><img src="assects/buttons/pencil.png" alt="карандаш" height="10" width="10"></button>
-		<button onclick="eraser();" ><img src="assects/buttons/eraser.png" alt="стёрка" height="10" width="10"></button>
-		<button onclick="reformer();"><img src="assects/buttons/reformer.png" alt="преобразование" height="10" width="10"></button>
-		<button style="background-color: #ff0000;" onclick="color = 1; set_color();">R</button>
-		<button style="background-color: #ffff00;" onclick="color = 2; set_color();">Y</button>
-		<button style="background-color: #00ff00;" onclick="color = 3; set_color();">G</button>
-		<button style="background-color: #00ffff;" onclick="color = 4; set_color();">A</button>
-		<button style="background-color: #0000ff;" onclick="color = 5; set_color();">B</button>
-		<button style="background-color: #ff00ff;" onclick="color = 6; set_color();">V</button>
-		<button style="background-color: #ffffff;" onclick="color = 7; set_color(); ">W</button>
-		<button style="background-color: #808080;" onclick="color = 8; set_color();">G</button>
-	</div> 
-	<div>
-		<button style="background-color: #ffffff;" id="color_now">N</button> 
-		<img id="instrument" src="assects/buttons/reformer.png" alt="инструмент" style="background-color: #ffffff; border-width: 2px; border-style: solid; border-color: white;" height="20" width="20">
+		<div><button id="clear" onclick="clear_life();"><img src="assets/buttons/eraser.png" width="10" height="10"> очистить</button></div>
+		<div><button id="save" onclick="save_life();">сохранить</button></div>
+		<div><button id="view" onclick="view_mode();"><img src="assets/buttons/view.png" width="10" height="7"> просмотр</button></div>  
+		<p></p>
+		<div>
+			<button style="background-color: #ff0000;" onclick="color = 1; set_color();">Rd</button>
+			<button style="background-color: #808000;" onclick="color = 4; set_color();">Ol</button>
+			<button style="background-color: #00ffff;" onclick="color = 7; set_color();">Aq</button>
+			<button style="background-color: #ff00ff;" onclick="color = 10; set_color(); ">Mg</button>
+			<button style="background-color: #808080;" onclick="color =	13; set_color();">Gr</button>  
+		</div>
+		<div>
+			<button style="background-color: #ff8000;" onclick="color = 2; set_color();">Or</button>
+			<button style="background-color: #00ff00;" onclick="color = 5; set_color();">Gr</button>
+			<button style="background-color: #0000ff;" onclick="color = 8; set_color();">Bl</button>
+			<button style="background-color: #ff0080;" onclick="color = 11; set_color();">Pu</button>
+			<button style="background-color: #cccccc;" onclick="color =	14; set_color();">Si</button> 
+		</div>
+		<div>
+			<button style="background-color: #ffff00;" onclick="color = 3; set_color();">Yl</button>
+			<button style="background-color: #00ff80;" onclick="color = 6; set_color();">Se</button>
+			<button style="background-color: #8000ff;" onclick="color = 9; set_color();">Vi</button>
+			<button style="background-color: #ffffff;" onclick="color =	12; set_color();">Wh</button> 
+			<button style="background-color: #708090;" onclick="color =	15; set_color();">Sg</button> 
+		</div>
+		<button style="background-color: #ffffff;" id="color_now">Now</button>
 	</div>
-	<div><button id="clear" onclick="clear_life();">очистить</button></div>
-	<div><button id="save" onclick="save_life();">сохранить</button></div>
-	<div><button id="view" onclick="view_mode();"><img src="assects/buttons/view.png" width="10" height="7"> просмотр</button></div>  
-	<div id="view_buttons">
+	<div id="life"></div>
+	<div id="view_buttons" style="position: fixed; z-index: 2;">
 		<button onclick="back_to_editor();">назад</button>
 		<button onclick="first_frame();">первый кадр</button>
 		<button onclick="one_step();">один шаг</button>
+		<button onclick="run_life();" id="run">старт</button> 
+		<button onclick="stop_run();" id="stop">стоп</button>
+		<p id="statistic" style="color: #ffffff; background-color: #000000;">ПОКОЛЕНИЕ: 0</p>
+		<p></p>
+		<p id="selected_fps" style="color: #ffffff; background-color: #000000;">УСТАНОВЛЕННОНОЕ FPS: 50</p>
+		<input value="50" min="1" max="50" type="range" id="run_delay" style="display: none; accent-color: #708090;" onchange="run_delay_changed()">
+		<p id="fps" style="color: #ffffff; background-color: #000000;">FPS:</p>
+		<p></p>
+		<div id="render_type_buttons">
+			<button onclick="rainbow();" >радужный</button>
+			<button onclick="age();" >возраст</button>
+			<button onclick="mono();" >монотон</button>
+		</div>
+		<button id="render_type_shower">радужный</button>
 	</div>
-	<button onclick="run_life();" id="run">старт</button> 
-	<button onclick="stop_run();" id="stop">стоп</button> 
-	<input value="50" type="number" id="run_delay" style="display: none;">
-	<p></p>
-	<div id="render_type_buttons">
-		<button onclick="rainbow();" >радужный</button>
-		<button onclick="age();" >возраст</button>
-		<button onclick="mono();" >монотон</button>
-	</div>
-	<button id="render_type_shower">радужный</button>
+	<h1>_</h1>
+	<h1>_</h1>
+	<h1>_</h1>
+	<h2>_</h2>
+	<h6>_</h6>
+	<canvas height="160" width="160" id="canvas" style="background-color: #000000; border-width: 2px; border-style: solid;					     border-color: grey; position: absolute; top: 275; z-index: 1;">ВАШ БРАУЗЕР НЕ ПОДДЕРЖИВАЕТ HTML 5!!</canvas>
 </body>
 <a download="life.golofe" href="null" id="download"></a>
 <script src="scripts/view_mode.js"></script>
 <script src="scripts/save_open.js"></script>
 <script src="scripts/edit.js"></script>
 <script src="scripts/icon.js"></script>
-<script src="scripts/elements_control.js"></script>
-<script src="scripts/click_framework.js"></script>
+<script src="scripts/document_control.js"></script>
+<script src="scripts/click.js"></script>
+<script src="scripts/BDS.js"></script>

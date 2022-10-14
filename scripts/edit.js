@@ -1,10 +1,11 @@
 var pixels = new Array();
-var color = 7;
+var color = 12;
 var color_name = "white";
 var instrument = "reformer";
 var count = new Array();
 var x;
 var y;
+const grid = 5;
 function create_array(){
 	pixels = [];
 	for (let i = 0; i < size; i++) {
@@ -27,28 +28,28 @@ function create_array(){
 }
 function pencil() {
 	instrument = "pencil" ;
-	document.getElementById('instrument').src=`assects/buttons/pencil.png`;
+	document.getElementById('instrument').src=`assets/buttons/pencil.png`;
 }
 function eraser() {
 	instrument = "eraser" ;
-	document.getElementById('instrument').src=`assects/buttons/eraser.png`;
+	document.getElementById('instrument').src=`assets/buttons/eraser.png`;
 }
 function reformer() {
 	instrument = "reformer" ;
-	document.getElementById('instrument').src=`assects/buttons/reformer.png`;
+	document.getElementById('instrument').src=`assets/buttons/reformer.png`;
 }
 function edit() {
-	x = Math.floor((x-5)/20);
-	y = Math.floor((y-80)/20);
+	x = Math.floor((x-document.getElementById('canvas').offsetLeft)/20);
+	y = Math.floor((y-document.getElementById('canvas').offsetTop)/20);
 	if (instrument == "pencil") {
 		pixels[x][y] = color;
 		ctx.fillStyle = color_name;
-		ctx.fillRect(x*20+1,y*20+1,19,19); 
+		fill_rect(x,y); 
 	}
 	if (instrument == "eraser") {
 		pixels[x][y] = 0;
 		ctx.fillStyle = "black";
-		ctx.fillRect(x*20+1,y*20+1,19,19); 
+		fill_rect(x,y); 
 	}
 	if (instrument == "reformer") {
 		if (pixels[x][y] == 0 || pixels[x][y] != color) {
@@ -59,34 +60,11 @@ function edit() {
 			pixels[x][y] = 0;
 			ctx.fillStyle = "black";
 		}
-		ctx.fillRect(x*20+1,y*20+1,19,19); 
+		fill_rect(x,y); 
 	}
 }
 function set_color() {
-	if (color == 1) {
-		color_name = "red";
-	}
-	if (color == 2) {
-		color_name = "yellow";
-	}
-	if (color == 3) {
-		color_name = "lime";
-	}
-	if (color == 4) {
-		color_name = "aqua";
-	}
-	if (color == 5) {
-		color_name = "blue";
-	}
-	if (color == 6) {
-		color_name = "magenta";
-	}
-	if (color == 7) {
-		color_name = "white";
-	}
-	if (color == 8) {
-		color_name = "grey";
-	}
+	color_name = rgbToHex(colors_sheet[color*3+0], colors_sheet[color*3+1], colors_sheet[color*3+2]);
 	document.getElementById('color_now').style.background=color_name;
 }
 function clear_life() {
@@ -95,8 +73,51 @@ function clear_life() {
 		for (x = 0; x < size; x++) {
 			for (y = 0; y < size; y++) {
 				pixels[x][y] = '0';
-				ctx.fillRect(x*20+1,y*20+1,19,19);
+				fill_rect(x,y);
 			}
 		}
 	} 
+}
+function fill_rect(x_fill,y_fill){
+	if (x_fill % grid == 0) {
+		if(y_fill % grid == 0) {
+			ctx.fillRect(x*20+1,y_fill*20+1,19,19);
+		}
+		else {
+			if (y_fill % grid == grid-1) {
+				ctx.fillRect(x*20+1,y_fill*20+1,19,18);
+			}
+			else {
+				ctx.fillRect(x*20+1,y_fill*20+1,19,19);
+			}
+		} 
+	}
+	else {
+		if(x_fill % grid == grid-1) {
+			if (y_fill % grid == 0) {
+			  ctx.fillRect(x*20+1,y_fill*20+1,18,19);
+			}
+			else {
+				if(y_fill % grid == grid-1) {
+					ctx.fillRect(x*20+1,y_fill*20+1,18,18);
+				} 
+				else {
+					ctx.fillRect(x*20+1,y_fill*20+1,18,19);
+				}
+			}
+		} 
+		else {
+			if (y_fill % grid == 0) {
+				ctx.fillRect(x*20+1,y_fill*20+1,19,19);
+			} 
+			else {
+				if (y_fill % grid == grid-1) {
+					ctx.fillRect(x*20+1,y_fill*20+1,19,18);
+				}
+				else {
+					ctx.fillRect(x*20+1,y_fill*20+1,19,19);
+				}
+			}
+		}
+	}
 }
