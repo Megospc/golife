@@ -66,15 +66,15 @@ function first_frame(){
 			if (pixels[x][y] != 0 ) {
 				if(render_type == "rainbow"){
 					ctx.fillStyle = rgbToHex(frame_red[x][y], frame_green[x][y], frame_blue[x][y]);
-					fill_rect(x*20+1,y*20+1,19,19);
+					fill_rect(x,y);
 				} 
 				if(render_type == "age"){
 					ctx.fillStyle = age_colors[1];
-					fill_rect(x*20+1,y*20+1,19,19);
+					fill_rect(x,y);
 				} 
 				if(render_type == "mono"){
 					ctx.fillStyle = mono_color;
-					fill_rect(x*20+1,y*20+1,19,19);
+					fill_rect(x,y);
 				} 
 			} 
 			else {
